@@ -1,6 +1,5 @@
 package com.ejemplos.spring.controller;
 
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +12,9 @@ import com.ejemplos.spring.adapter.EventoAdapter;
 import com.ejemplos.spring.model.Evento;
 import com.ejemplos.spring.response.EventoResponse;
 import com.ejemplos.spring.service.EventoService;
- 
+
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -49,13 +50,14 @@ public class EventosController {
 	 */
 	
 	@PostMapping()	
-	public EventoResponse saveEvento(@RequestBody EventoResponse input){
+	public ResponseEntity<Evento> saveEvento(@Valid @RequestBody EventoResponse eventoResponse){
 		
-		Evento e = eventoAdapter.of(input);
+		if (eventoResponse.getId_evento()!= null) {
+			eventoResponse.setId_evento(null);
+		}
 		
-		Optional<Evento> res = eventoService.saveEvento(e);
-		
-		return eventoAdapter.of(res.get());
+		Evento evento = eventoService.saveEvento(eventoAdapter.of(eventoResponse)).get();
+        return ResponseEntity.ok(evento);
 		
 	}
 	
