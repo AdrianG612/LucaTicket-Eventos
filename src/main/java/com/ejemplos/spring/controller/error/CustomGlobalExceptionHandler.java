@@ -22,7 +22,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	// error handle for @Valid
-	/*@Override
+	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 
@@ -51,37 +51,6 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 
 		return new ResponseEntity<>(customError, headers, status);
 
-	}*/
-	@Override
-	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-	        HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-
-	    logger.info("------ handleMethodArgumentNotValid()");
-
-	    CustomErrorJson customError = new CustomErrorJson();
-
-	    // Paso fecha pero la formatea a String con formato DD/MM/YY
-	    customError.setTimestamp(new Date());
-	    customError.setStatus(status.value());
-	    customError.setError(status.toString());
-
-	    // Obtener los errores indicando el campo y el mensaje
-	    List<String> messages = new ArrayList<>();
-	    for (FieldError error : ex.getBindingResult().getFieldErrors()) {
-	        if ("fecha_evento".equals(error.getField())) { // Si el campo con error es "fecha_evento"
-	            messages.add("El campo 'fecha_evento' tiene un formato incorrecto. Use el formato 'yy-MM-yyyy'.");
-	        } else {
-	            messages.add(error.getField() + ": " + error.getDefaultMessage());
-	        }
-	    }
-	    customError.setMessage(messages);
-
-	    // Para recoger el path y simular de forma completa los datos originales
-	    String uri = request.getDescription(false);
-	    uri = uri.substring(uri.lastIndexOf("=") + 1);
-	    customError.setPath(uri);
-
-	    return new ResponseEntity<>(customError, headers, status);
 	}
 
 

@@ -25,7 +25,7 @@ public class EventoResponse implements Serializable {
 	private String descripcion;
 
 	// La fecha tiene que tener determinado formato
-	@NotNull(message="La fecha no puede estar vacia")
+	@NotNull(message="El campo 'fecha_evento' tiene un formato incorrecto. Use el formato 'yyyy-MM-dd'.")
 	private LocalDate fecha_evento;
 	
 	private LocalTime hora_evento;
