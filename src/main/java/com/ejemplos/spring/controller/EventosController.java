@@ -13,7 +13,9 @@ import com.ejemplos.spring.adapter.EventoAdapter;
 import com.ejemplos.spring.model.Evento;
 import com.ejemplos.spring.response.EventoResponse;
 import com.ejemplos.spring.service.EventoService;
- 
+
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -49,7 +51,7 @@ public class EventosController {
 	 */
 	
 	@PostMapping()	
-	public EventoResponse saveEvento(@RequestBody EventoResponse input){
+	public EventoResponse saveEvento(@RequestBody @Valid EventoResponse input){
 		
 		Evento e = eventoAdapter.of(input);
 		
@@ -63,7 +65,7 @@ public class EventosController {
 
 	
 	
-	@GetMapping("/eventos")
+	@GetMapping()
     public ResponseEntity<List<EventoResponse>> obtenerEventos() {
 		List<EventoResponse> eventos = eventoAdapter.of(eventoService.findAll());
 		
