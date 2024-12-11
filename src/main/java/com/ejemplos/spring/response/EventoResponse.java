@@ -4,12 +4,11 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
+
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+
 import jakarta.validation.constraints.PositiveOrZero;
 
 //Trabaja de DTO
@@ -20,7 +19,8 @@ public class EventoResponse implements Serializable {
 	private Long id_evento;
 	
 	// nombre no puede estar vacio
-	@NotBlank(message="El nombre no puede estar vacio")
+
+	@NotBlank(message = "El nombre del evento no puede estar vacío")
 	private String nombre;
 	private String descripcion;
 
@@ -28,20 +28,19 @@ public class EventoResponse implements Serializable {
 	@NotNull(message="La fecha no puede estar vacia")
 	private LocalDate fecha_evento;
 	
-	// el horario debe tener el formato hora y minutos
-	@NotNull(message="La hora no puede estar vacia")
 	private LocalTime hora_evento;
 
 	// con la anotacion @PositiveOrZero comprobamos que solo pueda ser 0 o positivo;
-	@PositiveOrZero
+	@PositiveOrZero(message="El precio minimo no puede ser negativo")
 	private double precio_minimo;
-	@PositiveOrZero
+	@PositiveOrZero(message="El precio maximo no puede ser negativo")
 	private double precio_maximo;
 	private String localidad;
 	private String genero;
 	
 	// no puede estar vacio
-	@NotBlank(message="El nombre del recinto no puede estar vacio")
+
+	@NotBlank(message = "El nombre del recinto del evento no puede estar vacío")
 	private String nombre_recinto;
 
 	public Long getId_evento() {
