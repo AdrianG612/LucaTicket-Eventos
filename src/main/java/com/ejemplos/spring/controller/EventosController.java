@@ -3,6 +3,7 @@ package com.ejemplos.spring.controller;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +15,7 @@ import com.ejemplos.spring.model.Evento;
 import com.ejemplos.spring.response.EventoResponse;
 import com.ejemplos.spring.service.EventoService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 
 import java.util.List;
@@ -50,31 +52,46 @@ public class EventosController {
 	 * 
 	 *         FALTA IMPLEMENTAR RESPONSE ENTITY
 	 */
-
+	
+	@Operation(
+		summary = "Dar de alta un nuevo evento",
+		description = "Permite crear un nuevo evento en la base de datos. Ignora el Id_evento si se especifica en el Json de entrada."
+	)
 	@PostMapping()
-	public EventoResponse saveEvento(@RequestBody @Valid EventoResponse input) {
+	public ResponseEntity<EventoResponse> saveEvento(@RequestBody @Valid EventoResponse input) {
 
-		if (input.getId_evento() != null) {
-			input.setId_evento(null);
-		}
+		//Se ignora el id si se envía
+	    if (input.getId_evento() != null) {
+	        input.setId_evento(null);
+	    }
 
-		Evento e = eventoAdapter.of(input);
+	    // Se guarda el Evento covertido a Entidad
+	    EventoResponse res = eventoAdapter.of(eventoService.saveEvento(eventoAdapter.of(input)).get());
 
-		Optional<Evento> res = eventoService.saveEvento(e);
-
-		return eventoAdapter.of(res.get());
-
+	    //Se construye la ResponseEntity con el código 201
+	    return ResponseEntity
+	            .status(HttpStatus.CREATED)
+	            .body(res);
 	}
-
+	
+	@Operation(
+		summary = "Listar eventos almacenados",
+		description = "Permite obtener un listado de todos los elementos almacenados en la base de datos."
+	)
 	@GetMapping()
 	public ResponseEntity<List<EventoResponse>> obtenerEventos() {
 		List<EventoResponse> eventos = eventoAdapter.of(eventoService.findAll());
-
+		
+		//Si la lista está vacía devuelve un response entity que lo indique
 		if (eventos.isEmpty()) {
 			logger.warn("No se encontraron eventos en la base de datos.");
 			return ResponseEntity.noContent().build();
 		}
-		return ResponseEntity.ok(eventos);
+		
+		//Se construye la ResponseEntity con el código 200
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(eventos);
 	}
 
 }
