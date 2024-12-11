@@ -9,6 +9,7 @@ import org.mockito.*;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.Optional;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Arrays;
@@ -51,5 +52,23 @@ public class EventoServiceTest {
         //verificar findAll del repo
         verify(eventoRepository, times(1)).findAll();
     }
+	
+	
+	
+	@Test
+	public void testSaveEvento() {
+		
+        Evento evento1 = new Evento(1L, "Concierto 1", "Descripción 1", LocalDate.of(2024, 12, 15), LocalTime.of(19, 30), 20.0, 50.0, "Madrid", "Pop", "Recinto A");
+        
+        when(eventoRepository.save(evento1)).thenReturn(evento1);
+        
+        Evento result = eventoRepository.save(evento1);
+        
+        assertNotNull(result);
+        assertEquals(result.getNombre(), evento1.getNombre());  //deberia ser 2
+        verify(eventoRepository, times(1)).save(evento1);
+
+		
+	}
 	
 }
