@@ -54,6 +54,7 @@ public class EventoAdapter {
 		evento.setNombre_recinto(eventoResponse.getNombre_recinto());
 
 		return evento;
+		
 	}
 
 	public List<Evento> ofEvento(List<EventoResponse> responses) {
