@@ -33,9 +33,9 @@ import com.ejemplos.spring.service.EventoService;
 
 @RestController
 @RequestMapping("/eventos")
-public class EventosController {
+public class EventoController {
 
-	private static final Logger logger = LoggerFactory.getLogger(EventosController.class);
+	private static final Logger logger = LoggerFactory.getLogger(EventoController.class);
 
 	@Autowired
 	EventoService eventoService;
