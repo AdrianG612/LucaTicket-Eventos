@@ -4,6 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDate;
@@ -64,6 +65,28 @@ public class EventoControllerTest {
 	            .content(eventoJson))  
 	            .andDo(print())  
 	            .andExpect(status().isBadRequest()); 
+	}
+	
+	@Test
+	void shouldPostResponseEntity() throws Exception {
+		
+		String nombre = "nombre de prueba";
+		String fecha = "2024-12-12";
+		String descripcion = "descripcion de prueba";
+		
+	    
+	    String eventoJson = "{\"nombre\": \""+nombre+"\", \"descripcion\": \""+descripcion+"\", \"fecha_evento\": \""+fecha+"\", \"hora_evento\": "
+	    		+ "\"12:15:38.008316\", \"localidad\": \"Localidad\", \"genero\": \"Genero\", \"nombre_recinto\": "
+	    		+ "\"Recinto\", \"precio_maximo\": 100, \"precio_minimo\": 100}";
+
+	    mockMvc.perform(post("/eventos")
+	            .contentType(MediaType.APPLICATION_JSON)  
+	            .content(eventoJson))  
+	            .andDo(print())  
+	            .andExpect(status().isCreated())
+	            .andExpect(jsonPath("$.nombre").value(nombre))
+	            .andExpect(jsonPath("$.fecha_evento").value(fecha))
+	            .andExpect(jsonPath("$.descripcion").value(descripcion));
 	}
 }
 
