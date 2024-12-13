@@ -7,21 +7,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.ejemplos.spring.model.Evento;
-import com.ejemplos.spring.response.EventoResponse;
-import com.ejemplos.spring.service.EventoService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -29,9 +22,6 @@ public class EventoControllerTest {
 	
 	@Autowired
     private MockMvc mockMvc;
-	
-	@Autowired
-	private EventoService eventoService;
 	
 	@Test
 	void shouldGetEventoDevuelveJson() throws Exception {
@@ -87,6 +77,26 @@ public class EventoControllerTest {
 	            .andExpect(jsonPath("$.nombre").value(nombre))
 	            .andExpect(jsonPath("$.fecha_evento").value(fecha))
 	            .andExpect(jsonPath("$.descripcion").value(descripcion));
+	}
+	
+	@Test
+	void shouldGetEventoByIdNoExistenteDevuelve404() throws Exception {
+
+        Long id = 30L;
+
+        mockMvc.perform(get("/eventos/{id}", id) 
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+	}
+	
+	@Test
+	void shouldGetEventoNoExistenteDevuelve404() throws Exception {
+
+        Long id = -1L;
+
+        mockMvc.perform(get("/eventos/{id}", id) 
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
 	}
 }
 

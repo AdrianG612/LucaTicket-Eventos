@@ -11,4 +11,6 @@ public interface EventoService {
 	public Optional<Evento> saveEvento(Evento evento);
 	
 	public List<Evento> findAll();
+
+	public Optional<Evento> findBydId(Long id);
 }

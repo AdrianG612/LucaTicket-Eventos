@@ -1,6 +1,7 @@
 package com.ejemplos.spring.controller;
 
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ejemplos.spring.adapter.EventoAdapter;
+import com.ejemplos.spring.model.Evento;
 import com.ejemplos.spring.response.EventoResponse;
 import com.ejemplos.spring.service.EventoService;
 
@@ -18,10 +20,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 
 @RestController
@@ -87,6 +91,26 @@ public class EventoController {
 		return ResponseEntity
 				.status(HttpStatus.OK)
 				.body(eventos);
+	}
+	
+	/**
+	 * Crear Endpoint @GetMapping(“/{id}”) getEvento (@PathVariable Long id), devuelve ResponseEntity<EventoResponse>
+	 */
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<EventoResponse> getEvento(@PathVariable Long id){
+		
+		Optional<Evento> result = eventoService.findBydId(id);
+		
+		if (!result.isPresent()) {
+			logger.warn("No se encontro el evento en la base de datos.");
+			return ResponseEntity.notFound().build();
+		}
+		
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(eventoAdapter.of(result.get()));	
+		
 	}
 
 }
