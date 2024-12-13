@@ -8,8 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.ejemplos.spring.model.Evento;
 import com.ejemplos.spring.repository.EventoRepository;
-import com.ejemplos.spring.response.EventoResponse;
-import java.util.Optional;
+
 @Service
 public class EventoServiceImpl implements EventoService {
 	
@@ -31,6 +30,11 @@ public class EventoServiceImpl implements EventoService {
 
 		return eventoRepository.findById(id);
 		
+	}
+
+	@Override
+	public List<Evento> findByNombre(String nombre) {
+		return eventoRepository.findByNombre(nombre);
 	}
 
 }

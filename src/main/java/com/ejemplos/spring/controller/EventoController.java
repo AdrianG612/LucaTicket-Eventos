@@ -112,5 +112,28 @@ public class EventoController {
 				.body(eventoAdapter.of(result.get()));	
 		
 	}
+	
+	@Operation(
+		summary = "Listar eventos por nombre",
+		description = "Permite obtener un listado de todos los eventos con el mismo nombre."
+	)
+	@GetMapping("/nombre/{nombre}")
+    public ResponseEntity<List<EventoResponse>> getEvento(@PathVariable String nombre) {
+        List<Evento> eventos = eventoService.findByNombre(nombre);
+        
+        // Si no se encuentra ningún evento
+        if (eventos.isEmpty()) {
+            logger.warn("No se encontraron eventos con el nombre: {}", nombre);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        logger.info("Se encontraron {} evento(s) con el nombre: {}", eventos.size(), nombre);
+
+        // Mapear eventos a EventoResponse
+        List<EventoResponse> eventosResponse = eventos.stream()
+            .map(eventoAdapter::of)
+            .toList();
+
+        return ResponseEntity.ok(eventosResponse);
+    }
 
 }

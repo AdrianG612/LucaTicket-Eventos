@@ -13,4 +13,6 @@ public interface EventoService {
 	public List<Evento> findAll();
 
 	public Optional<Evento> findBydId(Long id);
+	
+	public List<Evento> findByNombre(String nombre);
 }

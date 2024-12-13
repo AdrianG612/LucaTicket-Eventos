@@ -98,6 +98,26 @@ public class EventoControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
 	}
+	
+	@Test
+	void shouldGetEventoByNombreNoExistenteDevuelve404() throws Exception {
+
+        String nombre="no existe";
+
+        mockMvc.perform(get("/eventos/nombre/{nombre}", nombre) 
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+	}
+	
+	@Test
+	void shouldGetEventoByNombre200() throws Exception {
+
+        String nombre="nombre";
+
+        mockMvc.perform(get("/eventos/nombre/{nombre}", nombre) 
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+	}
 }
 
 
