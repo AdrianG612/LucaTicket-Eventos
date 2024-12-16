@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ejemplos.spring.adapter.EventoAdapter;
+import com.ejemplos.spring.controller.error.MayorMenorException;
 import com.ejemplos.spring.model.Evento;
 import com.ejemplos.spring.response.EventoResponse;
 import com.ejemplos.spring.service.EventoService;
@@ -42,38 +43,42 @@ public class EventoController {
 	EventoAdapter eventoAdapter;
 
 	/**
-     * Crear un nuevo evento.
-     *
-     * @param input Datos del evento a guardar.
-     * @return Respuesta con los detalles del evento guardado.
-     */
-	@Operation(
-		summary = "Dar de alta un nuevo evento",
-		description = "Permite crear un nuevo evento en la base de datos. Ignora el Id_evento si se especifica en el Json de entrada."
-	)
-	@PostMapping()
-	public ResponseEntity<EventoResponse> saveEvento(@RequestBody @Valid EventoResponse input) {
-
-		//Se ignora el id si se envía
-	    if (input.getId_evento() != null) {
-	        input.setId_evento(null);
-	    }
-
-	    // Se guarda el Evento covertido a Entidad
-	    EventoResponse res = eventoAdapter.of(eventoService.saveEvento(eventoAdapter.of(input)).get());
-
-	    //Se construye la ResponseEntity con el código 201
-	    return ResponseEntity
-	            .status(HttpStatus.CREATED)
-	            .body(res);
-
-	}
+	 * Crear Endpoint @PostMapping(“/eventos”) saveEvento(@RequestBody
+	 * EventoResponse eventoResponse):
+	 * 
+	 * @param input
+	 * @return ResponseEntity <EventoResponse>
+	 * 
+	 *         FALTA IMPLEMENTAR RESPONSE ENTITY
+	 */
 	
-	/**
-     * Obtener todos los eventos almacenados.
-     *
-     * @return Lista de eventos en formato EventoResponse.
-     */
+	
+	@Operation(
+		    summary = "Dar de alta un nuevo evento",
+		    description = "Permite crear un nuevo evento en la base de datos. Ignora el Id_evento si se especifica en el Json de entrada."
+		)
+		@PostMapping()
+		public ResponseEntity<Evento> saveEvento(@RequestBody @Valid EventoResponse input) {
+
+		    // Se ignora el ID si se envía
+		    if (input.getId_evento() != null) {
+		        input.setId_evento(null);
+		    }
+
+		    // Se guarda el Evento convertido a Entidad
+		    Optional<Evento> res = eventoService.saveEvento(eventoAdapter.of(input));
+
+		    // Validar si el evento fue guardado
+		    if (res.isEmpty()) {
+		        throw new MayorMenorException();
+		    }
+
+		    // Construir la ResponseEntity con el código 201 y el cuerpo del evento creado
+		    return ResponseEntity
+		            .status(HttpStatus.CREATED) // Código HTTP 201
+		            .body(res.get()); // El evento guardado como cuerpo de la respuesta
+		}
+	
 	@Operation(
 		summary = "Listar eventos almacenados",
 		description = "Permite obtener un listado de todos los elementos almacenados en la base de datos."
@@ -95,15 +100,9 @@ public class EventoController {
 	}
 	
 	/**
-     * Obtener evento por ID.
-     *
-     * @param id Identificador del evento a buscar.
-     * @return Evento encontrado o código 404 si no se encuentra.
-     */
-    @Operation(
-        summary = "Obtener evento por ID",
-        description = "Permite obtener los detalles de un evento utilizando su ID."
-    )
+	 * Crear Endpoint @GetMapping(“/{id}”) getEvento (@PathVariable Long id), devuelve ResponseEntity<EventoResponse>
+	 */
+	
 	@GetMapping("/{id}")
 	public ResponseEntity<EventoResponse> getEvento(@PathVariable Long id){
 		
@@ -120,16 +119,10 @@ public class EventoController {
 		
 	}
 	
-	/**
-     * Obtener eventos por nombre.
-     *
-     * @param nombre Nombre del evento a buscar.
-     * @return Lista de eventos encontrados.
-     */
-    @Operation(
-        summary = "Listar eventos por nombre",
-        description = "Permite obtener un listado de todos los eventos con el mismo nombre."
-    )
+	@Operation(
+		summary = "Listar eventos por nombre",
+		description = "Permite obtener un listado de todos los eventos con el mismo nombre."
+	)
 	@GetMapping("/nombre/{nombre}")
     public ResponseEntity<List<EventoResponse>> getEvento(@PathVariable String nombre) {
         List<Evento> eventos = eventoService.findByNombre(nombre);
@@ -149,16 +142,6 @@ public class EventoController {
         return ResponseEntity.ok(eventosResponse);
     }
 	
-	/**
-     * Eliminar evento por ID.
-     *
-     * @param id Identificador del evento a eliminar.
-     * @return Detalles del evento eliminado o código 404 si no se encuentra.
-     */
-    @Operation(
-        summary = "Eliminar un evento por ID",
-        description = "Permite eliminar un evento usando su ID."
-    )
 	@DeleteMapping("/{id}")
 	public ResponseEntity<EventoResponse> deleteEvento(@PathVariable Long id) {
 		

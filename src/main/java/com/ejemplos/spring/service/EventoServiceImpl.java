@@ -17,7 +17,31 @@ public class EventoServiceImpl implements EventoService {
 	
 	@Override
 	public Optional<Evento> saveEvento(Evento evento) {
-		return Optional.of(eventoRepository.save(evento));
+	    // Validar el evento antes de intentar guardarlo
+	    if (comprobacion(evento)) {
+	        Evento savedEvento = eventoRepository.save(evento); // Guardar el evento y devolverlo
+	        return Optional.of(savedEvento); // Devolver el evento envuelto en un Optional
+	    }
+	    
+	    // Si no pasa la validación, devolver un Optional vacío
+	    return Optional.empty();
+	}
+	
+	
+	public boolean comprobacion(Evento evento) {
+	    boolean devolver = true;
+
+	    // Validar que el precio mínimo no sea mayor o igual al máximo
+	    if (evento.getPrecio_minimo() >= evento.getPrecio_maximo()) {
+	        devolver = false;
+	    }
+
+	    // Validar que el precio máximo no sea menor o igual al mínimo
+	    if (evento.getPrecio_maximo() <= evento.getPrecio_minimo()) {
+	        devolver = false;
+	    }
+
+	    return devolver;
 	}
 
 	@Override
