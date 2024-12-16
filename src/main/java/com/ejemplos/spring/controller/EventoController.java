@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ejemplos.spring.adapter.EventoAdapter;
+import com.ejemplos.spring.controller.error.MayorMenorException;
 import com.ejemplos.spring.model.Evento;
 import com.ejemplos.spring.response.EventoResponse;
 import com.ejemplos.spring.service.EventoService;
@@ -52,7 +53,7 @@ public class EventoController {
 	 */
 	
 
-	@Operation(
+	/*@Operation(
 		summary = "Dar de alta un nuevo evento",
 		description = "Permite crear un nuevo evento en la base de datos. Ignora el Id_evento si se especifica en el Json de entrada."
 	)
@@ -72,7 +73,33 @@ public class EventoController {
 	            .status(HttpStatus.CREATED)
 	            .body(res);
 
-	}
+	}*/
+	
+	@Operation(
+		    summary = "Dar de alta un nuevo evento",
+		    description = "Permite crear un nuevo evento en la base de datos. Ignora el Id_evento si se especifica en el Json de entrada."
+		)
+		@PostMapping()
+		public ResponseEntity<Evento> saveEvento(@RequestBody @Valid EventoResponse input) {
+
+		    // Se ignora el ID si se envía
+		    if (input.getId_evento() != null) {
+		        input.setId_evento(null);
+		    }
+
+		    // Se guarda el Evento convertido a Entidad
+		    Optional<Evento> res = eventoService.saveEvento(eventoAdapter.of(input));
+
+		    // Validar si el evento fue guardado
+		    if (res.isEmpty()) {
+		        throw new MayorMenorException();
+		    }
+
+		    // Construir la ResponseEntity con el código 201 y el cuerpo del evento creado
+		    return ResponseEntity
+		            .status(HttpStatus.CREATED) // Código HTTP 201
+		            .body(res.get()); // El evento guardado como cuerpo de la respuesta
+		}
 	
 	@Operation(
 		summary = "Listar eventos almacenados",
