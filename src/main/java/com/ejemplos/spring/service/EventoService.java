@@ -15,4 +15,7 @@ public interface EventoService {
 	public Optional<Evento> findBydId(Long id);
 	
 	public List<Evento> findByNombre(String nombre);
+	
+	public Optional<Evento> deleteEvento(Long id);
+	
 }

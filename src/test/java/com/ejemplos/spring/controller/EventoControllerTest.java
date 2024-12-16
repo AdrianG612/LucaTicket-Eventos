@@ -1,5 +1,9 @@
 package com.ejemplos.spring.controller;
 
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -7,13 +11,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDate;
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.ejemplos.spring.model.Evento;
+import com.ejemplos.spring.response.EventoResponse;
+import com.ejemplos.spring.service.EventoServiceImpl;
 
 
 @SpringBootTest
@@ -23,6 +34,9 @@ public class EventoControllerTest {
 	@Autowired
     private MockMvc mockMvc;
 	
+    @MockBean
+    private EventoServiceImpl eventoService;
+    
 	@Test
 	void shouldGetEventoDevuelveJson() throws Exception {
 
@@ -118,7 +132,54 @@ public class EventoControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 	}
+	
+	@Test
+	void shouldDeleteEventoExite() throws Exception {
+		
+	    // Mock del evento existente
+	    Long idEvento = 1L;
+	    Evento evento = new Evento();
+	    evento.setId_evento(idEvento);
+	    evento.setNombre("Concierto navidad");
+	    evento.setFecha_evento(LocalDate.of(2024, 12, 25));
+	    evento.setLocalidad("Madrid");
+
+	    EventoResponse eventoResponse = new EventoResponse();
+	    eventoResponse.setId_evento(evento.getId_evento());
+	    eventoResponse.setNombre(evento.getNombre());
+	    eventoResponse.setFecha_evento(evento.getFecha_evento());
+	    eventoResponse.setLocalidad(evento.getLocalidad());
+
+	    // Mock del comportamiento del servicio: que te devuelva el objeto cuando lo eliminas
+	    when(eventoService.deleteEvento(idEvento)).thenReturn(Optional.of(evento));
+
+	    // Realizar la solicitud DELETE al endpoint
+	    mockMvc.perform(delete("/eventos/{id}", idEvento)
+	            .contentType(MediaType.APPLICATION_JSON))
+	            .andDo(print())
+	            .andExpect(status().isOk()) // Verificar status 200
+	            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+	            .andExpect(jsonPath("$.id_evento").value(idEvento))
+	            .andExpect(jsonPath("$.nombre").value(evento.getNombre()))
+	            .andExpect(jsonPath("$.fecha_evento").value("2024-12-25"));
+
+	    // Verificar que el servicio fue llamado correctamente
+	    verify(eventoService, times(1)).deleteEvento(idEvento);
+	}
+
+	@Test
+	void shouldDeleteEventoNotFound() throws Exception {
+	    // ID de un evento que no existe
+	    Long idEventoInexistente = 9999L;
+
+	    when(eventoService.deleteEvento(idEventoInexistente)).thenReturn(Optional.empty());
+
+	    // Realizar la solicitud DELETE al endpoint
+	    mockMvc.perform(delete("/eventos/{id}", idEventoInexistente)
+	            .contentType(MediaType.APPLICATION_JSON))
+	            .andDo(print())
+	            .andExpect(status().isNotFound());  // Verificar que el estado sea 404 Not Found
+	}
+	
 }
-
-
 

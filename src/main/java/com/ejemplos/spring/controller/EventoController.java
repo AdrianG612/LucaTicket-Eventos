@@ -24,6 +24,7 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -135,5 +136,26 @@ public class EventoController {
 
         return ResponseEntity.ok(eventosResponse);
     }
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<EventoResponse> deleteEvento(@PathVariable Long id) {
+		
+	    // Intentar eliminar el evento
+	    Optional<Evento> eventoOptional = eventoService.deleteEvento(id);
+
+	    if (eventoOptional.isPresent()) {
+	        //logger.info("Evento con ID {} eliminado exitosamente.", id);
+	    	
+	        // Convertir el evento eliminado a EventoResponse
+	    	EventoAdapter adapter = new EventoAdapter();
+	    	EventoResponse response = adapter.of(eventoOptional.get());
+
+	        return ResponseEntity.ok(response); // Devolver el evento eliminado
+	    } else {
+	        logger.warn("No se encontró evento con ID: {}", id);
+	        return ResponseEntity.notFound().build(); // Devolver 404
+	    }
+	}
+	
 
 }

@@ -37,4 +37,16 @@ public class EventoServiceImpl implements EventoService {
 		return eventoRepository.findByNombre(nombre);
 	}
 
+	@Override
+	public Optional<Evento> deleteEvento(Long id) {
+	    Optional<Evento> eventoDelete= eventoRepository.findById(id);
+
+	    if (eventoDelete.isPresent()) {
+	        eventoRepository.delete(eventoDelete.get());
+	        return eventoDelete; 
+	    }
+
+	    return Optional.empty(); // Si no lo encuentra devolver vacío
+	}
+
 }
