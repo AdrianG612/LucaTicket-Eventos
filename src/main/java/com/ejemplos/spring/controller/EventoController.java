@@ -42,16 +42,11 @@ public class EventoController {
 	EventoAdapter eventoAdapter;
 
 	/**
-	 * Crear Endpoint @PostMapping(“/eventos”) saveEvento(@RequestBody
-	 * EventoResponse eventoResponse):
-	 * 
-	 * @param input
-	 * @return ResponseEntity <EventoResponse>
-	 * 
-	 *         FALTA IMPLEMENTAR RESPONSE ENTITY
-	 */
-	
-
+     * Crear un nuevo evento.
+     *
+     * @param input Datos del evento a guardar.
+     * @return Respuesta con los detalles del evento guardado.
+     */
 	@Operation(
 		summary = "Dar de alta un nuevo evento",
 		description = "Permite crear un nuevo evento en la base de datos. Ignora el Id_evento si se especifica en el Json de entrada."
@@ -74,6 +69,11 @@ public class EventoController {
 
 	}
 	
+	/**
+     * Obtener todos los eventos almacenados.
+     *
+     * @return Lista de eventos en formato EventoResponse.
+     */
 	@Operation(
 		summary = "Listar eventos almacenados",
 		description = "Permite obtener un listado de todos los elementos almacenados en la base de datos."
@@ -95,9 +95,15 @@ public class EventoController {
 	}
 	
 	/**
-	 * Crear Endpoint @GetMapping(“/{id}”) getEvento (@PathVariable Long id), devuelve ResponseEntity<EventoResponse>
-	 */
-	
+     * Obtener evento por ID.
+     *
+     * @param id Identificador del evento a buscar.
+     * @return Evento encontrado o código 404 si no se encuentra.
+     */
+    @Operation(
+        summary = "Obtener evento por ID",
+        description = "Permite obtener los detalles de un evento utilizando su ID."
+    )
 	@GetMapping("/{id}")
 	public ResponseEntity<EventoResponse> getEvento(@PathVariable Long id){
 		
@@ -114,10 +120,16 @@ public class EventoController {
 		
 	}
 	
-	@Operation(
-		summary = "Listar eventos por nombre",
-		description = "Permite obtener un listado de todos los eventos con el mismo nombre."
-	)
+	/**
+     * Obtener eventos por nombre.
+     *
+     * @param nombre Nombre del evento a buscar.
+     * @return Lista de eventos encontrados.
+     */
+    @Operation(
+        summary = "Listar eventos por nombre",
+        description = "Permite obtener un listado de todos los eventos con el mismo nombre."
+    )
 	@GetMapping("/nombre/{nombre}")
     public ResponseEntity<List<EventoResponse>> getEvento(@PathVariable String nombre) {
         List<Evento> eventos = eventoService.findByNombre(nombre);
@@ -137,6 +149,16 @@ public class EventoController {
         return ResponseEntity.ok(eventosResponse);
     }
 	
+	/**
+     * Eliminar evento por ID.
+     *
+     * @param id Identificador del evento a eliminar.
+     * @return Detalles del evento eliminado o código 404 si no se encuentra.
+     */
+    @Operation(
+        summary = "Eliminar un evento por ID",
+        description = "Permite eliminar un evento usando su ID."
+    )
 	@DeleteMapping("/{id}")
 	public ResponseEntity<EventoResponse> deleteEvento(@PathVariable Long id) {
 		
