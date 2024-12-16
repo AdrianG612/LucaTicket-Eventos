@@ -5,8 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class LucaTicketEventosApplication {
-
-	//hola
+	// cambio
 	public static void main(String[] args) {
 		SpringApplication.run(LucaTicketEventosApplication.class, args);
 	}

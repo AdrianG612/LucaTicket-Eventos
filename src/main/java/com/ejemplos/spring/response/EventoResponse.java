@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-
 import jakarta.validation.constraints.NotBlank;
 
 import jakarta.validation.constraints.NotNull;
@@ -17,7 +16,7 @@ public class EventoResponse implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Long id_evento;
-	
+
 	// nombre no puede estar vacio
 
 	@NotBlank(message = "El nombre del evento no puede estar vacío")
@@ -25,19 +24,19 @@ public class EventoResponse implements Serializable {
 	private String descripcion;
 
 	// La fecha tiene que tener determinado formato
-	@NotNull(message="El campo 'fecha_evento' tiene un formato incorrecto. Use el formato 'yyyy-MM-dd'.")
+	@NotNull(message = "El campo 'fecha_evento' tiene un formato incorrecto. Use el formato 'yyyy-MM-dd'.")
 	private LocalDate fecha_evento;
-	
+
 	private LocalTime hora_evento;
 
 	// con la anotacion @PositiveOrZero comprobamos que solo pueda ser 0 o positivo;
-	@PositiveOrZero(message="El precio minimo no puede ser negativo")
+	@PositiveOrZero(message = "El precio minimo no puede ser negativo")
 	private double precio_minimo;
-	@PositiveOrZero(message="El precio maximo no puede ser negativo")
+	@PositiveOrZero(message = "El precio maximo no puede ser negativo")
 	private double precio_maximo;
 	private String localidad;
 	private String genero;
-	
+
 	// no puede estar vacio
 
 	@NotBlank(message = "El nombre del recinto del evento no puede estar vacío")
