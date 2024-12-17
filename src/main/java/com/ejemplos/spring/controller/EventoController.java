@@ -112,7 +112,7 @@ public class EventoController {
 			response.put("timestamp", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
 			response.put("timestamp", System.currentTimeMillis());
 			response.put("status", HttpStatus.NOT_FOUND);
-			response.put("message", "El usuario con el id: " + id + " enviado no se encuentra en la base de datos");
+			response.put("message", "El evento con el id: " + id + " enviado no se encuentra en la base de datos");
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		}
 
@@ -158,7 +158,7 @@ public class EventoController {
 			response.put("timestamp", System.currentTimeMillis());
 			response.put("status", HttpStatus.NOT_FOUND);
 			response.put("message",
-					"El usuario con el id: " + id + " no se encuentra en la base de datos para ser eliminado");
+					"El evento con el id: " + id + " no se encuentra en la base de datos para ser eliminado");
 			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 
 		}
