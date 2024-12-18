@@ -1,25 +1,30 @@
 package com.ejemplos.spring;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
 
-import com.ejemplos.spring.model.Evento;
-import com.ejemplos.spring.response.EventoResponse;
-import com.ejemplos.spring.service.EventoService;
+import com.ejemplos.spring.repository.EventoRepository;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;  // Importa el método 'get'
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
+@SpringBootTest
 class LucaTicketEventosApplicationTests {
 
+	@Autowired
+    private EventoRepository eventoRepository;
+
+    @Test
+    void whenDatabaseIsAvailable_thenRepositoryShouldWork() {
+    	//Comprobar que el repositorio no es null
+        assertNotNull(eventoRepository, "El repositorio no debería ser nulo");
+
+        // Ejecutar una operación simple para verificar la conexión
+        long count = eventoRepository.count();  //Cuenta los registros que hay en la base de datos 
+        assertTrue(count >= 0, "La base de datos debería devolver un conteo válido");
+    }
 
 }
