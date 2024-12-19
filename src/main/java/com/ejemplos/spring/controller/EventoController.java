@@ -42,17 +42,16 @@ public class EventoController {
 	@Autowired
 	EventoAdapter eventoAdapter;
 
-	 /**
-     * Crear un nuevo evento en la base de datos.
-     * 
-     * @param input Objeto EventoResponse con los datos del evento que se desea crear. 
-     * @return ResponseEntity con el evento creado si se guarda correctamente, o un mensaje de error si falla.
-     */
-    @Operation(
-        summary = "Dar de alta un nuevo evento", 
-        description = "Permite crear un nuevo evento en la base de datos. Se ignora el ID si se especifica en la entrada JSON."
-    )
-    @PostMapping()
+	/**
+	 * Crear un nuevo evento en la base de datos.
+	 * 
+	 * @param input Objeto EventoResponse con los datos del evento que se desea
+	 *              crear.
+	 * @return ResponseEntity con el evento creado si se guarda correctamente, o un
+	 *         mensaje de error si falla.
+	 */
+	@Operation(summary = "Dar de alta un nuevo evento", description = "Permite crear un nuevo evento en la base de datos. Se ignora el ID si se especifica en la entrada JSON.")
+	@PostMapping()
 	public ResponseEntity<?> saveEvento(@RequestBody @Valid EventoResponse input) {
 
 		// Se ignora el ID si se envía
@@ -80,16 +79,13 @@ public class EventoController {
 				.body(res.get()); // El evento guardado como cuerpo de la respuesta
 	}
 
-    /**
-     * Obtener una lista de todos los eventos almacenados en la base de datos.
-     * 
-     * @return ResponseEntity con una lista de objetos EventoResponse si hay eventos en la base de datos, 
-     *         o un código 204 si no hay datos.
-     */
-    @Operation(
-        summary = "Listar eventos almacenados", 
-        description = "Obtiene una lista de todos los eventos registrados en la base de datos."
-    )
+	/**
+	 * Obtener una lista de todos los eventos almacenados en la base de datos.
+	 * 
+	 * @return ResponseEntity con una lista de objetos EventoResponse si hay eventos
+	 *         en la base de datos, o un código 204 si no hay datos.
+	 */
+	@Operation(summary = "Listar eventos almacenados", description = "Obtiene una lista de todos los eventos registrados en la base de datos.")
 	@GetMapping()
 	public ResponseEntity<List<EventoResponse>> obtenerEventos() {
 		List<EventoResponse> eventos = eventoAdapter.of(eventoService.findAll());
@@ -104,16 +100,14 @@ public class EventoController {
 		return ResponseEntity.status(HttpStatus.OK).body(eventos);
 	}
 
-    /**
-     * Buscar un evento específico por su ID.
-     * 
-     * @param id Identificador único del evento a buscar.
-     * @return ResponseEntity con el evento encontrado, o un mensaje de error si el ID no existe en la base de datos.
-     */
-    @Operation(
-        summary = "Buscar evento por ID", 
-        description = "Permite obtener un evento específico utilizando su identificador único."
-    )
+	/**
+	 * Buscar un evento específico por su ID.
+	 * 
+	 * @param id Identificador único del evento a buscar.
+	 * @return ResponseEntity con el evento encontrado, o un mensaje de error si el
+	 *         ID no existe en la base de datos.
+	 */
+	@Operation(summary = "Buscar evento por ID", description = "Permite obtener un evento específico utilizando su identificador único.")
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getEvento(@PathVariable Long id) {
 
@@ -133,24 +127,27 @@ public class EventoController {
 
 	}
 
-    /**
-     * Listar eventos que coincidan con un nombre dado.
-     * 
-     * @param nombre Nombre por el cual buscar los eventos.
-     * @return ResponseEntity con una lista de eventos que coincidan con el nombre, o un código 404 si no se encuentran resultados.
-     */
-    @Operation(
-        summary = "Listar eventos por nombre", 
-        description = "Obtiene todos los eventos que coincidan con un nombre específico."
-    )
+	/**
+	 * Listar eventos que coincidan con un nombre dado.
+	 * 
+	 * @param nombre Nombre por el cual buscar los eventos.
+	 * @return ResponseEntity con una lista de eventos que coincidan con el nombre,
+	 *         o un código 404 si no se encuentran resultados.
+	 */
+	@Operation(summary = "Listar eventos por nombre", description = "Obtiene todos los eventos que coincidan con un nombre específico.")
 	@GetMapping("/nombre/{nombre}")
-	public ResponseEntity<List<EventoResponse>> getEvento(@PathVariable String nombre) {
+	public ResponseEntity<?> getEvento(@PathVariable String nombre) {
 		List<Evento> eventos = eventoService.findByNombre(nombre);
 
 		// Si no se encuentra ningún evento
 		if (eventos.isEmpty()) {
 			logger.warn("No se encontraron eventos con el nombre: {}", nombre);
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+			Map<String, Object> response = new HashMap<>();
+			response.put("timestamp", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+			response.put("timestamp", System.currentTimeMillis());
+			response.put("status", HttpStatus.NOT_FOUND);
+			response.put("message", "No existe ningún evento que coincida con el nombre: " + nombre);
+			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		}
 		logger.info("Se encontraron {} evento(s) con el nombre: {}", eventos.size(), nombre);
 
@@ -160,16 +157,14 @@ public class EventoController {
 		return ResponseEntity.ok(eventosResponse);
 	}
 
-    /**
-     * Eliminar un evento utilizando su ID.
-     * 
-     * @param id Identificador único del evento a eliminar.
-     * @return ResponseEntity con los detalles del evento eliminado si existe, o un mensaje de error si no se encuentra.
-     */
-    @Operation(
-        summary = "Eliminar un evento", 
-        description = "Permite eliminar un evento de la base de datos utilizando su identificador único."
-    )
+	/**
+	 * Eliminar un evento utilizando su ID.
+	 * 
+	 * @param id Identificador único del evento a eliminar.
+	 * @return ResponseEntity con los detalles del evento eliminado si existe, o un
+	 *         mensaje de error si no se encuentra.
+	 */
+	@Operation(summary = "Eliminar un evento", description = "Permite eliminar un evento de la base de datos utilizando su identificador único.")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> deleteEvento(@PathVariable Long id) {
 
